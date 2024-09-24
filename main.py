@@ -1,2 +1,1 @@
-test123 = 1
-print(test123)
+test123
