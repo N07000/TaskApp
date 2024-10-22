@@ -1,7 +1,7 @@
 # main.py
 
 from database import create_tables
-from nicegui import ui
+from gui import setup_gui
 
 # Tabellen erstellen
 create_tables()
