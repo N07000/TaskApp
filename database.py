@@ -10,7 +10,7 @@ def create_tables():
     conn = create_connection()
     cursor = conn.cursor()
 
-    # Tabelle für Aufgaben erstellen (inkl. neue Attribute)
+    # Tabelle für Aufgaben erstellen
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,9 +23,9 @@ def create_tables():
         )
     ''')
 
-    # Tabelle für Benutzer erstellen (inkl. coins)
+    # Tabelle für User erstellen
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS user (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT,
             level INTEGER,
@@ -48,7 +48,7 @@ def save_task(task):
 def save_user(user):
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, level, xp, coins) VALUES (?, ?, ?, ?)',
+    cursor.execute('INSERT INTO user (username, level, xp, coins) VALUES (?, ?, ?, ?)',
                    (user.username, user.level, user.xp, user.coins))
     conn.commit()
     conn.close()
@@ -61,10 +61,13 @@ def get_tasks():
     conn.close()
     return tasks
 
-def get_users():
+def load_user():
     conn = create_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM users')
-    users = cursor.fetchall()
+    cursor.execute('SELECT * FROM user LIMIT 1')
+    user_data = cursor.fetchone()
     conn.close()
-    return users
+    
+    if user_data:
+        return User(username=user_data[1], level=user_data[2], xp=user_data[3], coins=user_data[4])
+    return None

@@ -7,26 +7,21 @@ class Task:
         self.taskname = taskname
         self.taskdesc = taskdesc
         self.difficulty = difficulty
-        self.status = status  # pending, completed, etc.
+        self.status = status  # pending, completed
         self.priority = priority  # low, normal, high
         self.finaldate = finaldate  # Deadline
 
     def mark_as_completed(self):
         self.status = 'completed'
 
-    def update_task(self, taskname=None, taskdesc=None, difficulty=None, status=None, priority=None, finaldate=None):
-        if taskname:
-            self.taskname = taskname
-        if taskdesc:
-            self.taskdesc = taskdesc
-        if difficulty:
-            self.difficulty = difficulty
-        if status:
-            self.status = status
-        if priority:
-            self.priority = priority
-        if finaldate:
-            self.finaldate = finaldate
+    def get_xp_reward(self):
+        # XP-Belohnung je nach Schwierigkeitsgrad
+        if self.difficulty == 'easy':
+            return 10
+        elif self.difficulty == 'medium':
+            return 20
+        elif self.difficulty == 'hard':
+            return 30
 
     def __str__(self):
-        return f"Task: {self.taskname}, Description: {self.taskdesc}, Due: {self.finaldate}, Priority: {self.priority}, Status: {self.status}, Difficulty: {self.difficulty}"
+        return f"Task: {self.taskname}, Due: {self.finaldate}, Status: {self.status}, Priority: {self.priority}, Difficulty: {self.difficulty}"

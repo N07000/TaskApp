@@ -17,9 +17,9 @@ class User:
         while self.xp >= self.xp_until_next_level:
             self.level += 1
             self.xp -= self.xp_until_next_level
-            self.xp_until_next_level = int(self.xp_until_next_level * 1.5)
-            self.coins += 100  # Reward coins for leveling up
+            self.xp_until_next_level = int(self.xp_until_next_level * 1.5)  # Schwierigkeit des Level-Ups steigt
+            self.coins += 100  # Belohnung für Level-Up
             print(f"Congratulations! You are now Level {self.level}. Coins: {self.coins}")
 
     def __str__(self):
-        return f"Username: {self.username}, Level: {self.level}, XP: {self.xp}/{self.xp_until_next_level}, Coins: {self.coins}"
+        return f"User: {self.username}, Level: {self.level}, XP: {self.xp}/{self.xp_until_next_level}, Coins: {self.coins}"
