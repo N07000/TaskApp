@@ -3,7 +3,7 @@
 from datetime import datetime
 
 class Task:
-    def __init__(self, taskname, taskdesc, difficulty='medium', status='pending', priority='normal', finaldate=None):
+    def init_task(self, taskname, taskdesc, difficulty='medium', status='pending', priority='normal', finaldate=None):
         self.taskname = taskname
         self.taskdesc = taskdesc
         self.difficulty = difficulty
@@ -23,5 +23,5 @@ class Task:
         elif self.difficulty == 'hard':
             return 30
 
-    def __str__(self):
+    def str_task(self):
         return f"Task: {self.taskname}, Due: {self.finaldate}, Status: {self.status}, Priority: {self.priority}, Difficulty: {self.difficulty}"

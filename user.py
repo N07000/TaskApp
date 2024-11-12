@@ -1,7 +1,7 @@
 # user.py
 
 class User:
-    def __init__(self, username, level=1, xp=0, coins=0):
+    def init_user(self, username, level=1, xp=0, coins=0):
         self.username = username
         self.level = level
         self.xp = xp
@@ -21,5 +21,5 @@ class User:
             self.coins += 100  # Belohnung für Level-Up
             print(f"Congratulations! You are now Level {self.level}. Coins: {self.coins}")
 
-    def __str__(self):
+    def str_user(self):
         return f"User: {self.username}, Level: {self.level}, XP: {self.xp}/{self.xp_until_next_level}, Coins: {self.coins}"

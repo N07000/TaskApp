@@ -1,6 +1,7 @@
 # database.py
 
 import sqlite3
+from user import User
 
 def create_connection():
     conn = sqlite3.connect('todrpg.db')
