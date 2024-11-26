@@ -49,8 +49,12 @@ def setup_task_manager():
         ui.button('Show Tasks', on_click=show_tasks).classes('bg-blue-500 text-white px-4 py-2 rounded')
 
 # Benutzeroberfläche aufbauen
-def setup_gui():
-    with ui.card().classes('w-full bg-gray-200 p-4'):
-        ui.label('Welcome to ToDoRPG').classes('text-4xl text-center mb-4')
-        setup_task_manager()  # Direkt den Task Manager für den User anzeigen
-        ui.run()
+def setup_gui(user=None):
+    if user:
+        with ui.card().classes('w-full bg-gray-200 p-4'):
+            ui.label(f'Welcome {user.username}, Level {user.level}, Coins: {user.coins}').classes('text-2xl text-center')
+            setup_task_manager()  # Task-Manager anzeigen
+    else:
+        create_user()  # Benutzererstellungsformular anzeigen
+        ui.button('Button', on_click=lambda: ui.notify('Click'))
+    ui.run()
