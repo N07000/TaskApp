@@ -1,26 +1,15 @@
-# main.py
-
-from database import create_tables
-from gui import setup_gui
-# Tabellen erstellen
-create_tables()
-
-# GUI starten
-# main.py
-
-from database import create_tables, load_user, save_user
-from gui import setup_gui
 from nicegui import ui
-from user import User
+from gui import start_app
+from database import initialize_database
 
-# Tabellen erstellen
-create_tables()
+def main():
+    initialize_database()
 
-# Benutzer laden
-current_user = load_user()
+    @ui.page('/')
+    def index():
+        start_app()
 
-# GUI mit oder ohne Benutzer starten
-setup_gui(current_user)
+    ui.run()
 
-if __name__ == '__main__':
+if __name__ in {'__main__', '__mp_main__'}:
     main()

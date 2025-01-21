@@ -1,74 +1,106 @@
-# database.py
-
 import sqlite3
-from user import User
 
-def create_connection():
-    conn = sqlite3.connect('todrpg.db')
-    return conn
+DATABASE_NAME = "todorpg.db"
 
-def create_tables():
-    conn = create_connection()
+def get_connection():
+    return sqlite3.connect(DATABASE_NAME)
+
+def initialize_database():
+    conn = get_connection()
     cursor = conn.cursor()
 
-    # Tabelle für Aufgaben erstellen
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            taskname TEXT,
-            taskdesc TEXT,
-            difficulty TEXT,
-            status TEXT,
-            priority TEXT,
-            finaldate TEXT
-        )
-    ''')
-
-    # Tabelle für User erstellen
-    cursor.execute('''
+    # Tabelle für Nutzer
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS user (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            level INTEGER,
-            xp INTEGER,
-            coins INTEGER
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            class TEXT NOT NULL,
+            race TEXT NOT NULL,
+            level INTEGER DEFAULT 0,
+            xp INTEGER DEFAULT 0,
+            max_xp INTEGER DEFAULT 100
         )
-    ''')
+    """)
+
+    # Tabelle für Quests
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS quest (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT,
+            difficulty TEXT NOT NULL,
+            end_date TEXT NOT NULL,
+            completed INTEGER DEFAULT 0
+        )
+    """)
 
     conn.commit()
     conn.close()
 
-def save_task(task):
-    conn = create_connection()
+def user_exists():
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO tasks (taskname, taskdesc, difficulty, status, priority, finaldate) VALUES (?, ?, ?, ?, ?, ?)',
-                   (task.taskname, task.taskdesc, task.difficulty, task.status, task.priority, task.finaldate))
+    cursor.execute("SELECT COUNT(*) FROM user")
+    exists = cursor.fetchone()[0] > 0
+    conn.close()
+    return exists
+
+def create_user(name, user_class, race):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO user (name, class, race) VALUES (?, ?, ?)
+    """, (name, user_class, race))
     conn.commit()
     conn.close()
 
-def save_user(user):
-    conn = create_connection()
+def get_user():
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO user (username, level, xp, coins) VALUES (?, ?, ?, ?)',
-                   (user.username, user.level, user.xp, user.coins))
+    cursor.execute("SELECT * FROM user LIMIT 1")
+    user = cursor.fetchone()
+    conn.close()
+    return user
+
+def update_user_level_xp(level, xp, max_xp):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE user SET level = ?, xp = ?, max_xp = ? WHERE id = 1
+    """, (level, xp, max_xp))
     conn.commit()
     conn.close()
 
-def get_tasks():
-    conn = create_connection()
+def delete_user():
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM tasks')
-    tasks = cursor.fetchall()
+    cursor.execute("DELETE FROM user")
+    cursor.execute("DELETE FROM quest")
+    conn.commit()
     conn.close()
-    return tasks
 
-def load_user():
-    conn = create_connection()
+def create_quest(name, description, difficulty, end_date):
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM user LIMIT 1')
-    user_data = cursor.fetchone()
+    cursor.execute("""
+        INSERT INTO quest (name, description, difficulty, end_date) VALUES (?, ?, ?, ?)
+    """, (name, description, difficulty, end_date))
+    conn.commit()
     conn.close()
-    
-    if user_data:
-        return User(username=user_data[1], level=user_data[2], xp=user_data[3], coins=user_data[4])
-    return None
+
+def get_quests():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM quest WHERE completed = 0 ORDER BY id DESC")
+    quests = cursor.fetchall()
+    conn.close()
+    return quests
+
+def complete_quest(quest_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE quest SET completed = 1 WHERE id = ?
+    """, (quest_id,))
+    conn.commit()
+    conn.close()

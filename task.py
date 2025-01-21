@@ -1,27 +1,27 @@
-# task.py
+from database import create_quest, get_quests, complete_quest
 
-from datetime import datetime
-
-class Task:
-    def __init__(self, taskname, taskdesc, difficulty='medium', status='pending', priority='normal', finaldate=None):
-        self.taskname = taskname
-        self.taskdesc = taskdesc
+class Quest:
+    def __init__(self, id, name, description, difficulty, end_date, completed):
+        self.id = id
+        self.name = name
+        self.description = description
         self.difficulty = difficulty
-        self.status = status  # pending, completed
-        self.priority = priority  # low, normal, high
-        self.finaldate = finaldate  # Deadline
+        self.end_date = end_date
+        self.completed = completed
 
-    def mark_as_completed(self):
-        self.status = 'completed'
+    @staticmethod
+    def create_new(name, description, difficulty, end_date):
+        create_quest(name, description, difficulty, end_date)
 
-    def get_xp_reward(self):
-        # XP-Belohnung je nach Schwierigkeitsgrad
-        if self.difficulty == 'easy':
-            return 10
-        elif self.difficulty == 'medium':
-            return 20
-        elif self.difficulty == 'hard':
-            return 30
+    @staticmethod
+    def get_all():
+        quests_data = get_quests()
+        quests = []
+        for q in quests_data:
+            quest = Quest(*q)
+            quests.append(quest)
+        return quests
 
-    def __str__(self):
-        return f"Task: {self.taskname}, Due: {self.finaldate}, Status: {self.status}, Priority: {self.priority}, Difficulty: {self.difficulty}"
+    @staticmethod
+    def complete(quest_id):
+        complete_quest(quest_id)
