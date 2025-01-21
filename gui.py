@@ -12,15 +12,25 @@ def start_app():
 def show_user_creation():
     with ui.card().classes('w-96 mx-auto mt-10'):
         ui.markdown('## Nutzer erstellen')
-        name = ui.input('Username eingeben').classes('mt-5')
-        race = ui.input('Rasse eingeben')
-        user_class = ui.input('Klasse eingeben')
-        def create():
-            create_user(name.value, user_class.value, race.value)
-            ui.notify('Nutzer erfolgreich erstellt!', color='green')
-            ui.run_javascript('window.location.reload()')
-        ui.button('Nutzer erstellen', on_click=create).classes('mt-5')
-
+        with ui.stepper().props('vertical').classes('w-full') as stepper:
+            with ui.step('Nutzername'):
+                name = ui.input('Nutzername eingeben').classes('mt-5')
+                with ui.stepper_navigation():
+                    ui.button('weiter', on_click=stepper.next)
+            with ui.step('Rasse'):
+                race = ui.input('Rasse eingeben')
+                with ui.stepper_navigation():
+                    ui.button('weiter', on_click=stepper.next)
+                    ui.button('zurück', on_click=stepper.previous).props('flat')
+            with ui.step('Klasse'):
+                user_class = ui.input('Klasse eingeben')
+                with ui.stepper_navigation():
+                    def create():
+                        create_user(name.value, user_class.value, race.value)
+                        ui.notify('Nutzer erfolgreich erstellt!', color='green')
+                        ui.run_javascript('window.location.reload()')
+                    ui.button('Nutzer erstellen', on_click=create)
+                    ui.button('zurück', on_click=stepper.previous).props('flat')
 def show_main_interface():
     user = User()
     with ui.row().classes('justify-between items-center mt-5 mx-5'):
@@ -50,7 +60,7 @@ def show_quest_creation():
         ui.markdown('## Neue Quest erstellen')
         name = ui.input('Name der Quest').classes('mt-5')
         description = ui.textarea('Beschreibung der Quest')
-        end_date = ui.input('Enddatum (YYYY-MM-DD)')
+        end_date = ui.date(on_change=lambda e: result.set_text(e.value))
         ui.label('Schwierigkeit auswählen')
         difficulty = ui.radio(['Leicht', 'Mittel', 'Schwer'], value='Leicht')
         def create():
