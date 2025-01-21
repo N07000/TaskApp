@@ -9,7 +9,7 @@ def main():
     def index():
         start_app()
 
-    ui.run()
+    ui.run(title='TaskApp', favicon='📝')
 
 if __name__ in {'__main__', '__mp_main__'}:
     main()
