@@ -82,3 +82,4 @@ def complete_quest_action(quest):
     user.add_xp(xp_reward[quest.difficulty])
     ui.notify(f'Quest "{quest.name}" abgeschlossen! {xp_reward[quest.difficulty]} XP erhalten.', color='green')
     ui.run_javascript('window.location.reload()')
+

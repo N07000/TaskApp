@@ -21,3 +21,4 @@ class User:
             self.level += 1
             self.max_xp += 100
         update_user_level_xp(self.level, self.xp, self.max_xp)
+

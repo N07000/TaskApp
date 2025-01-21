@@ -25,3 +25,4 @@ class Quest:
     @staticmethod
     def complete(quest_id):
         complete_quest(quest_id)
+

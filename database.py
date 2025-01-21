@@ -104,3 +104,4 @@ def complete_quest(quest_id):
     """, (quest_id,))
     conn.commit()
     conn.close()
+
