@@ -10,6 +10,7 @@ def start_app():
         show_main_interface()
 
 def show_user_creation():
+    ui.query('body').classes('bg-gradient-to-t from-blue-400 to-blue-100')
     with ui.card().classes('w-96 mx-auto mt-10'):
         ui.markdown('## Nutzer erstellen')
         with ui.stepper().props('vertical').classes('w-full') as stepper:
@@ -35,31 +36,32 @@ def show_main_interface():
     user = User()
     ui.colors(primary='#555') #--- STANDARDFARBE FÜR KNÖPFE ---
 
-    with ui.row().classes('justify-between items-center mt-5 mx-5'):
-        with ui.column():
-            ui.markdown(f'### {user.name} ({user.user_class})')
-            ui.markdown(f'**Rasse:** {user.race}')
-        with ui.column().classes('text-right'):
-            ui.markdown(f'**Level:** {user.level}')
-            ui.markdown(f'**XP:** {user.xp}/{user.max_xp}')
-    
-    with ui.row().classes('justify-end mx-5'):
-        ui.button('Quest erstellen', on_click=show_quest_creation)
-        ui.button('Nutzer löschen', on_click=confirm_user_deletion, color='red')
-        dark = ui.dark_mode()
-        ui.label('   Design:   ')
-        ui.button('Darkmode', on_click=dark.enable)
-        ui.button('Lightmode', on_click=dark.disable)
+    with ui.card():
+        with ui.row().classes('justify-between items-center mt-5 mx-5'):
+            with ui.column():
+                ui.markdown(f'### {user.name} ({user.user_class})')
+                ui.markdown(f'**Rasse:** {user.race}')
+            with ui.column().classes('text-right'):
+                ui.markdown(f'**Level:** {user.level}')
+                ui.markdown(f'**XP:** {user.xp}/{user.max_xp}')
+        
+        with ui.row().classes('justify-end mx-5'):
+            ui.button('Quest erstellen', on_click=show_quest_creation)
+            ui.button('Nutzer löschen', on_click=confirm_user_deletion, color='red')
+            dark = ui.dark_mode()
+            ui.label('   Design:   ')
+            ui.button('Darkmode', on_click=dark.enable)
+            ui.button('Lightmode', on_click=dark.disable)
 
-    quests = Quest.get_all()
-    for quest in quests:
-        with ui.card().classes('mt-5 mx-5'):
-            with ui.row().classes('justify-between'):
-                ui.markdown(f'### {quest.name}')
-            ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q))
-            ui.markdown(quest.description)
-            ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
-            ui.markdown(f'**Enddatum:** {quest.end_date}')
+        quests = Quest.get_all()
+        for quest in quests:
+            with ui.card().classes('mt-5 mx-5'):
+                with ui.row().classes('justify-between'):
+                    ui.markdown(f'### {quest.name}')
+                ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q))
+                ui.markdown(quest.description)
+                ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
+                ui.markdown(f'**Enddatum:** {quest.end_date}')
 
 def show_quest_creation():
     with ui.dialog() as quest_dialog, ui.card().classes('w-96'):
@@ -97,5 +99,6 @@ def complete_quest_action(quest):
     xp_reward = {'leicht': 50, 'mittel': 100, 'schwer': 150}
     user = User()
     user.add_xp(xp_reward[quest.difficulty])
-    ui.notify(f'Quest "{quest.name}" abgeschlossen! {xp_reward[quest.difficulty]} XP erhalten.', color='green', type='positive')
     ui.run_javascript('window.location.reload()')
+    ui.notify(f'Quest "{quest.name}" abgeschlossen! {xp_reward[quest.difficulty]} XP erhalten.', color='green', type='positive')
+    
