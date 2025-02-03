@@ -12,7 +12,7 @@ def start_app():
 def show_user_creation():
     ui.query('body').classes('bg-gradient-to-t from-blue-400 to-blue-100')
     with ui.card().classes('w-96 mx-auto mt-10'):
-        ui.markdown('##Nutzer erstellen')
+        ui.markdown('##Willkommen')
         with ui.stepper().props('vertical').classes('w-full') as stepper:
             with ui.step('Nutzername'):
                 name = ui.input('Nutzername eingeben', validation={'Pflichtfeld': lambda value: len(value) != 0}).classes('mt-5')
@@ -37,6 +37,7 @@ def show_main_interface():
     ui.colors(primary='#555') #--- STANDARDFARBE FÜR KNÖPFE ---
     #ui.button.default_props('rounded outline') #--- STANDARDEIGENSCHAFTEN FÜR KNÖPFE ---
     dark = ui.dark_mode()
+    #dark.enable()
 
     with ui.card(align_items='baseline').classes('w-full shadow-lg'):
         with ui.row().classes('justify-between items-center mt-5 mx-5'):
@@ -45,8 +46,8 @@ def show_main_interface():
                 ui.markdown(f'**Rasse:** {user.race}')
             with ui.column().classes('text-right'):
                 ui.markdown(f'**Level:** {user.level}')
-                ui.linear_progress().bind_value_from(user.xp, 'value')
-                ui.markdown(f'**XP:** {user.xp}/{user.max_xp}')
+                ui.linear_progress(value=user.xp / user.max_xp, show_value=False).classes('w-96')
+                #ui.markdown(f'**XP:** {user.xp}/{user.max_xp}')
         
         with ui.row().classes('justify-end mx-5'):
             ui.button('Quest erstellen', on_click=show_quest_creation)
@@ -55,23 +56,34 @@ def show_main_interface():
             ui.button('Darkmode', on_click=dark.enable)
             ui.button('Lightmode', on_click=dark.disable)
 
+        # Erstelle eine Zeile für die Quests
     quests = Quest.get_all()
-    for quest in quests:
-        with ui.card().classes('mt-5 mx-5'):
-            with ui.row().classes('justify-between'):
-                ui.markdown(f'### {quest.name}')
-            ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q))
-            ui.markdown(quest.description)
-            ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
-            ui.markdown(f'**Enddatum:** {quest.end_date}')
+
+    # Erstelle eine Zeile für die Quests
+    with ui.row().classes('flex flex-wrap justify-start'):
+        for quest in quests:
+            with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col'):  # Feste Breite und minimale Höhe
+                with ui.row().classes('justify-between'):
+                    ui.markdown(f'### {quest.name}')
+                ui.markdown(quest.description)  # Beschreibung ohne 'classes'
+                ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
+                ui.markdown(f'**Enddatum:** {quest.end_date}')
+                # Button in einem eigenen Container
+                with ui.row().classes('bg-green mt-auto'):
+                    ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q)).classes('bg-green-500 text-white')  # Button grün färben
+
+
+
 
 def show_quest_creation():
     with ui.dialog() as quest_dialog, ui.card(align_items='stretch').classes('w-96'):
         ui.markdown('## Neue Quest erstellen')
         name = ui.input('Name der Quest').classes('mt-5')
         description = ui.input('Beschreibung der Quest')
+        ui.markdown()
         ui.markdown(f'**Enddatum auswählen**')
-        end_date = ui.date(on_change=lambda e: result.set_text(e.value), mask='DD.MM.YYYY')
+        end_date = ui.date(mask='DD.MM.YYYY').classes('mt-2 w-full')
+        ui.markdown()
         ui.markdown('**Schwierigkeit auswählen**')
         difficulty = ui.radio(['Leicht', 'Mittel', 'Schwer'], value='Leicht')
         def create():
