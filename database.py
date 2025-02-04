@@ -31,6 +31,7 @@ def initialize_database():
             description TEXT,
             difficulty TEXT NOT NULL,
             end_date TEXT NOT NULL,
+            current_status TEXT NOT NULL,
             completed INTEGER DEFAULT 0
         )
     """)
@@ -80,12 +81,12 @@ def delete_user():
     conn.commit()
     conn.close()
 
-def create_quest(name, description, difficulty, end_date):
+def create_quest(name, description, difficulty, end_date, current_status):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO quest (name, description, difficulty, end_date) VALUES (?, ?, ?, ?)
-    """, (name, description, difficulty, end_date))
+        INSERT INTO quest (name, description, difficulty, end_date, current_status) VALUES (?, ?, ?, ?, ?)
+    """, (name, description, difficulty, end_date, current_status))
     conn.commit()
     conn.close()
 
@@ -103,6 +104,24 @@ def complete_quest(quest_id):
     cursor.execute("""
         UPDATE quest SET completed = 1 WHERE id = ?
     """, (quest_id,))
+    conn.commit()
+    conn.close()
+
+def update_quest(quest_id, name, description, difficulty, end_date, current_status):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE quest 
+        SET name = ?, description = ?, difficulty = ?, end_date = ?, current_status = ?
+        WHERE id = ?
+    """, (name, description, difficulty, end_date, current_status, quest_id))
+    conn.commit()
+    conn.close()
+
+def delete_quest(quest_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM quest WHERE id = ?", (quest_id,))
     conn.commit()
     conn.close()
 

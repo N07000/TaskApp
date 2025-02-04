@@ -74,32 +74,82 @@ def show_main_interface():
     # Erstelle eine Zeile für die Quests
     with ui.row().classes('flex flex-wrap justify-start'):
         for quest in quests:
-            with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col'):  # Feste Breite und minimale Höhe
+            with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col'):
                 with ui.row().classes('justify-between'):
                     ui.markdown(f'### {quest.name}')
-                ui.markdown(quest.description)  # Beschreibung ohne 'classes'
+                with ui.element('div').classes('h-32 w-full border rounded-lg p-2 bg-gray-100 dark:bg-gray-800 overflow-y-auto'):
+                    ui.markdown(quest.description).classes('whitespace-pre-wrap')
                 ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
                 ui.markdown(f'**Enddatum:** {quest.end_date}')
-                ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q), color='green').classes('flex justify-center')
-
+                ui.markdown(f'**Status:** {quest.current_status}')
+                with ui.row().classes('justify-between mt-auto'):
+                    ui.button('Bearbeiten', 
+                         on_click=lambda q=quest: show_quest_edit(q),
+                         color='blue')
+                    ui.button('Abschließen', 
+                         on_click=lambda q=quest: complete_quest_action(q),
+                         color='green')
+                
 def show_quest_creation():
     with ui.dialog() as quest_dialog, ui.card(align_items='stretch').classes('w-96'):
         ui.markdown('## Neue Quest erstellen')
         name = ui.input('Name der Quest').classes('mt-5')
-        description = ui.input('Beschreibung der Quest')
+        ui.markdown('**Beschreibung**')
+        description = ui.textarea('Beschreibung der Quest').classes('w-full h-32')
         ui.markdown()
         ui.markdown(f'**Enddatum auswählen**')
         end_date = ui.date(mask='DD.MM.YYYY').classes('mt-2 w-full')
         ui.markdown()
         ui.markdown('**Schwierigkeit auswählen**')
         difficulty = ui.radio(['Leicht', 'Mittel', 'Schwer'], value='Leicht')
+        ui.markdown()
+        ui.markdown('**Status auswählen**')
+        status = ui.radio(['Nicht begonnen', 'In Bearbeitung', 'Warten'], value='Nicht begonnen')
         def create():
-            Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value)
+            Quest.create_new(name.value, description.value, difficulty.value.lower(), 
+                           end_date.value, status.value)
             ui.notify('Quest erfolgreich erstellt!', color='green')
             quest_dialog.close()
             ui.run_javascript('window.location.reload()')
         ui.button('Quest erstellen', on_click=create).classes('mt-5')
     quest_dialog.open()
+
+def show_quest_edit(quest):
+    with ui.dialog() as edit_dialog, ui.card(align_items='stretch').classes('w-96'):
+        ui.markdown('## Quest bearbeiten')
+        name = ui.input('Name der Quest', value=quest.name).classes('mt-5')
+        ui.markdown('**Beschreibung**')
+        description = ui.textarea(value=quest.description).classes('w-full h-32')
+        ui.markdown()
+        ui.markdown(f'**Enddatum auswählen**')
+        end_date = ui.date(mask='DD.MM.YYYY', value=quest.end_date).classes('mt-2 w-full')
+        ui.markdown()
+        ui.markdown('**Schwierigkeit auswählen**')
+        difficulty = ui.radio(['Leicht', 'Mittel', 'Schwer'], 
+                            value=quest.difficulty.capitalize())
+        ui.markdown()
+        ui.markdown('**Status auswählen**')
+        status = ui.radio(['Nicht begonnen', 'In Bearbeitung', 'Warten'], 
+                         value=quest.current_status)
+        
+        with ui.row().classes('justify-between mt-5'):
+            def update():
+                Quest.update_existing(quest.id, name.value, description.value,
+                                   difficulty.value.lower(), end_date.value, status.value)
+                ui.notify('Quest erfolgreich aktualisiert!', color='green')
+                edit_dialog.close()
+                ui.run_javascript('window.location.reload()')
+                
+            def delete():
+                Quest.delete(quest.id)
+                ui.notify('Quest gelöscht!', color='red')
+                edit_dialog.close()
+                ui.run_javascript('window.location.reload()')
+                
+            ui.button('Löschen', on_click=delete, color='red')
+            ui.button('Speichern', on_click=update, color='green')
+    edit_dialog.open()
+
 
 def confirm_user_deletion():
     with ui.dialog() as delete_user_dialog, ui.card(align_items='stretch').classes('w-70'):
