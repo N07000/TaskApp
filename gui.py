@@ -110,12 +110,12 @@ def show_quest_creation():
         ui.markdown('**Status auswählen**')
         status = ui.radio(['Nicht begonnen', 'In Bearbeitung', 'Warten'], value='Nicht begonnen')
         def create():
-            if name.value == '#devcode1000xp':
+            if name.value == '!devcode1000xp':
                 user = User()
                 user.add_xp(1000)
                 quest_dialog.close()
                 ui.run_javascript('window.location.reload()')
-            elif name.value == '#devcode10tasks':
+            elif name.value == '!devcode10tasks':
                 for i in range(9):
                     Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value, status.value)
                 quest_dialog.close()
