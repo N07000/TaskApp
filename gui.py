@@ -1,7 +1,7 @@
 from nicegui import ui
 from user import User
 from task import Quest
-from database import user_exists, create_user, delete_user
+from database import user_exists, create_user, delete_user, update_dark_mode, get_dark_mode
 
 def start_app():
     if not user_exists():
@@ -38,6 +38,10 @@ def show_main_interface():
     #ui.button.default_props('rounded outline') #--- STANDARDEIGENSCHAFTEN FÜR KNÖPFE ---
     dark = ui.dark_mode()
     #dark.enable()
+    if user.dark_mode:
+        dark.enable()
+    else:
+        dark.disable()
 
     with ui.card(align_items='baseline').classes('w-full shadow-lg'):
         with ui.row().classes('justify-between items-center mt-5 mx-5'):
@@ -46,15 +50,22 @@ def show_main_interface():
                 ui.markdown(f'**Rasse:** {user.race}')
             with ui.column().classes('text-right'):
                 ui.markdown(f'**Level:** {user.level}')
-                ui.linear_progress(value=user.xp / user.max_xp, show_value=False).classes('w-96')
+                ui.linear_progress(value=user.xp / user.max_xp, show_value=False, color="#00BFFF").classes('w-96')
                 #ui.markdown(f'**XP:** {user.xp}/{user.max_xp}')
         
         with ui.row().classes('justify-end mx-5'):
             ui.button('Quest erstellen', on_click=show_quest_creation)
             ui.button('Nutzer löschen', on_click=confirm_user_deletion, color='red')
             ui.markdown('   **Design:**   ')
-            ui.button('Darkmode', on_click=dark.enable)
-            ui.button('Lightmode', on_click=dark.disable)
+            def enable_dark():
+                dark.enable()
+                update_dark_mode(True)
+                
+            def disable_dark():
+                dark.disable()
+                update_dark_mode(False)
+            ui.button('Darkmode', on_click=enable_dark)
+            ui.button('Lightmode', on_click=disable_dark)
 
         # Erstelle eine Zeile für die Quests
     quests = Quest.get_all()

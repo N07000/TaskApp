@@ -4,7 +4,7 @@ class User:
     def __init__(self):
         user_data = get_user()
         if user_data:
-            (self.id, self.name, self.user_class, self.race, self.level, self.xp, self.max_xp) = user_data
+            (self.id, self.name, self.user_class, self.race, self.level, self.xp, self.max_xp, self.dark_mode) = user_data
         else:
             self.id = None
             self.name = ""
@@ -13,6 +13,7 @@ class User:
             self.level = 0
             self.xp = 0
             self.max_xp = 100
+            self.dark_mode = False
 
     def add_xp(self, amount):
         self.xp += amount

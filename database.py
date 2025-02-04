@@ -18,7 +18,8 @@ def initialize_database():
             race TEXT NOT NULL,
             level INTEGER DEFAULT 0,
             xp INTEGER DEFAULT 0,
-            max_xp INTEGER DEFAULT 100
+            max_xp INTEGER DEFAULT 100,
+            dark_mode INTEGER DEFAULT 0
         )
     """)
 
@@ -105,4 +106,19 @@ def complete_quest(quest_id):
     conn.commit()
     conn.close()
 
+def update_dark_mode(is_dark: bool):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE user SET dark_mode = ? WHERE id = 1
+    """, (1 if is_dark else 0,))
+    conn.commit()
+    conn.close()
 
+def get_dark_mode() -> bool:
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT dark_mode FROM user WHERE id = 1")
+    result = cursor.fetchone()
+    conn.close()
+    return bool(result[0]) if result else False
