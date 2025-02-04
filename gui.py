@@ -56,7 +56,6 @@ def show_main_interface():
         with ui.row().classes('justify-end mx-5'):
             ui.button('Quest erstellen', on_click=show_quest_creation)
             ui.button('Nutzer löschen', on_click=confirm_user_deletion, color='red')
-            ui.markdown('   **Design:**   ')
             def enable_dark():
                 dark.enable()
                 update_dark_mode(True)
@@ -64,8 +63,10 @@ def show_main_interface():
             def disable_dark():
                 dark.disable()
                 update_dark_mode(False)
-            ui.button('Darkmode', on_click=enable_dark)
-            ui.button('Lightmode', on_click=disable_dark)
+            if user.level >= 2:
+                ui.markdown('   **Design:**   ')
+                ui.button('Darkmode', on_click=enable_dark)
+                ui.button('Lightmode', on_click=disable_dark)
 
         # Erstelle eine Zeile für die Quests
     quests = Quest.get_all()
