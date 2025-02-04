@@ -48,40 +48,28 @@ def show_main_interface():
 
     with ui.card(align_items='baseline').classes('w-full shadow-lg'):
         with ui.row().classes('justify-between items-center mt-5 mx-5'):
-            with ui.column():
-                # Profilbild-Bereich
+            with ui.column().classes(f'rounded-outline absolute top-0 right-0 m-2'):
                 if user.level >= 5:
                     with ui.row().classes('items-center gap-4'):
-                        # Profilbild oder Platzhalter
                         if user.profile_image and os.path.exists(user.profile_image):
-                            ui.image(user.profile_image).classes('w-24 h-24 rounded-lg')
+                            ui.image(user.profile_image).classes('w-40 h-40 rounded-lg')
                         else:
-                            ui.element('div').classes('w-24 h-24 bg-gray-200 rounded-lg')
-        
-                        # Profilbild-Buttons
-                        with ui.column().classes('gap-2'):
-                            async def handle_upload(e):
-                                if e.content:  # Änderung von e.files zu e.content
-                                    user.save_profile_image(e.content)
-                                    ui.notify('Profilbild erfolgreich aktualisiert!')
-                                    await ui.run_javascript('window.location.reload()')
-            
-                            upload = ui.upload(
-                                label='Profilbild hochladen',
-                                auto_upload=True,
-                                on_upload=handle_upload,
-                                multiple=False  # Nur eine Datei erlauben
-                            ).props('accept=".jpg, .jpeg, .png"')
-            
-                            def remove_image():
-                                user.delete_profile_image()
-                                ui.notify('Profilbild entfernt!')
-                                ui.run_javascript('window.location.reload()')
-            
-                            ui.button('Profilbild löschen', 
-                                on_click=remove_image,
-                                color='red').props('outline')
-            ui.button('NICHT DRÜCKEN', on_click=lock_laptop, color='red').classes(f'rounded-outline absolute top-0 right-0 m-2')
+                            ui.element('div').classes('w-40 h-40 bg-gray-200 rounded-lg')
+                            with ui.column().classes('gap-2'):
+                                async def handle_upload(e):
+                                    if e.content:  # Änderung von e.files zu e.content
+                                        user.save_profile_image(e.content)
+                                        ui.notify('Profilbild erfolgreich aktualisiert!')
+                                        await ui.run_javascript('window.location.reload()')
+                
+                                upload = ui.upload(
+                                    label='Profilbild hochladen',
+                                    auto_upload=True,
+                                    on_upload=handle_upload,
+                                    multiple=False  # Nur eine Datei erlauben
+                                ).props('accept=".jpg, .jpeg, .png"')
+                else:
+                    ui.markdown('**Profilbild (ab Level 5)**')                  
             with ui.column():
                 ui.markdown(f'## **{user.name} ({user.user_class})**')
                 ui.markdown(f'**Rasse:** {user.race}')
@@ -93,6 +81,7 @@ def show_main_interface():
         with ui.row().classes('justify-end mx-5'):
             ui.button('Quest erstellen', on_click=show_quest_creation)
             ui.button('Nutzer löschen', on_click=confirm_user_deletion, color='red')
+            ui.button('!! NICHT DRÜCKEN !!', on_click=lock_laptop, color='red')#.classes(f'rounded-outline absolute top-0 right-0 m-2')
             def enable_dark():
                 dark.enable()
                 update_dark_mode(True)
