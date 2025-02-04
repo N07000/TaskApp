@@ -81,6 +81,13 @@ def delete_user():
     conn.commit()
     conn.close()
 
+def delete_quests():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM quest")
+    conn.commit()
+    conn.close()
+
 def create_quest(name, description, difficulty, end_date, current_status):
     conn = get_connection()
     cursor = conn.cursor()

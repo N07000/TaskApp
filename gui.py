@@ -1,7 +1,7 @@
 from nicegui import ui
 from user import User
 from task import Quest
-from database import user_exists, create_user, delete_user, update_dark_mode, get_dark_mode
+from database import user_exists, create_user, delete_user, update_dark_mode, get_dark_mode, delete_quests
 import subprocess
 
 def start_app():
@@ -156,10 +156,15 @@ def show_quest_creation():
                     Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value, status.value)
                 quest_dialog.close()
                 ui.run_javascript('window.location.reload()')
-            Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value, status.value)
-            ui.notify('Quest erfolgreich erstellt!', color='green')
-            quest_dialog.close()
-            ui.run_javascript('window.location.reload()')
+            elif name.value == '!devcodedeletetasks':
+                delete_quests()
+                quest_dialog.close()
+                ui.run_javascript('window.location.reload()')
+            else:
+                Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value, status.value)
+                ui.notify('Quest erfolgreich erstellt!', color='green')
+                quest_dialog.close()
+                ui.run_javascript('window.location.reload()')
         ui.button('Quest erstellen', on_click=create).classes('mt-5')
     quest_dialog.open()
 
