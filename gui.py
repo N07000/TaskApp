@@ -37,10 +37,8 @@ def show_main_interface():
     def lock_laptop():
         subprocess.run(['rundll32.exe', 'user32.dll,LockWorkStation'])
     user = User()
-    ui.colors(primary='#555') #--- STANDARDFARBE FÜR KNÖPFE ---
-    #ui.button.default_props('rounded outline') #--- STANDARDEIGENSCHAFTEN FÜR KNÖPFE ---
+    ui.colors(primary='#555') 
     dark = ui.dark_mode()
-    #dark.enable()
     if user.dark_mode:
         dark.enable()
     else:
@@ -76,7 +74,6 @@ def show_main_interface():
                 ui.button('Darkmode', on_click=enable_dark).props('disabled')
                 ui.button('Lightmode', on_click=disable_dark).props('disabled')
 
-        # Erstelle eine Zeile für die Quests
     def get_status_color(status):
         if status == 'Nicht begonnen':
             return 'bg-red-500'
