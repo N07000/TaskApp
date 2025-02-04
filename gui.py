@@ -74,13 +74,24 @@ def show_main_interface():
 
         # Erstelle eine Zeile für die Quests
     quests = Quest.get_all()
-
+    def get_status_color(status):
+        if status == 'Nicht begonnen':
+            return 'bg-red-500'
+        elif status == 'Warten':
+            return 'bg-yellow-500'
+        elif status == 'In Bearbeitung':
+            return 'bg-green-500'
+        else:
+            return 'bg-gray-500'
     # Erstelle eine Zeile für die Quests
     with ui.row().classes('flex flex-wrap justify-start'):
         for quest in quests:
             with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col'):
                 with ui.row().classes('justify-between'):
                     ui.markdown(f'### {quest.name}')
+                    
+                    ui.element('div').classes(f'h-6 w-6 rounded-full absolute top-0 right-0 m-2 {get_status_color(quest.current_status)}').tooltip(quest.current_status)
+                                              
                 with ui.element('div').classes('h-32 w-full border rounded-lg p-2 bg-gray-100 dark:bg-gray-800 overflow-y-auto'):
                     ui.markdown(quest.description).classes('whitespace-pre-wrap')
                 ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
