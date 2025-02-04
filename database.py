@@ -90,10 +90,18 @@ def create_quest(name, description, difficulty, end_date, current_status):
     conn.commit()
     conn.close()
 
-def get_quests():
+def get_active_quests():
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM quest WHERE completed = 0 ORDER BY id DESC")
+    quests = cursor.fetchall()
+    conn.close()
+    return quests
+
+def get_completed_quests():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM quest WHERE completed = 1 ORDER BY id DESC")
     quests = cursor.fetchall()
     conn.close()
     return quests
@@ -102,7 +110,9 @@ def complete_quest(quest_id):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        UPDATE quest SET completed = 1 WHERE id = ?
+        UPDATE quest 
+        SET completed = 1, current_status = 'Abgeschlossen' 
+        WHERE id = ?
     """, (quest_id,))
     conn.commit()
     conn.close()

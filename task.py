@@ -1,4 +1,4 @@
-from database import create_quest, get_quests, complete_quest, update_quest, delete_quest
+from database import create_quest, get_active_quests, get_completed_quests, complete_quest, update_quest, delete_quest
 
 class Quest:
     def __init__(self, id, name, description, difficulty, end_date, current_status, completed):
@@ -15,8 +15,17 @@ class Quest:
         create_quest(name, description, difficulty, end_date, current_status)
 
     @staticmethod
-    def get_all():
-        quests_data = get_quests()
+    def get_active():
+        quests_data = get_active_quests()
+        quests = []
+        for q in quests_data:
+            quest = Quest(*q)
+            quests.append(quest)
+        return quests
+
+    @staticmethod
+    def get_completed():
+        quests_data = get_completed_quests()
         quests = []
         for q in quests_data:
             quest = Quest(*q)

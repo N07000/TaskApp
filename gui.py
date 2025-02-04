@@ -73,7 +73,6 @@ def show_main_interface():
                 ui.button('Lightmode', on_click=disable_dark).props('disabled')
 
         # Erstelle eine Zeile für die Quests
-    quests = Quest.get_all()
     def get_status_color(status):
         if status == 'Nicht begonnen':
             return 'bg-red-500'
@@ -81,17 +80,22 @@ def show_main_interface():
             return 'bg-yellow-500'
         elif status == 'In Bearbeitung':
             return 'bg-green-500'
+        elif status == 'Abgeschlossen':
+            return 'bg-blue-500'
         else:
             return 'bg-gray-500'
     # Erstelle eine Zeile für die Quests
+    # Aktive Quests
+    active_quests = Quest.get_active()
+    ui.markdown('## Aktive Quests').classes('mt-8 mb-4')
     with ui.row().classes('flex flex-wrap justify-start'):
-        for quest in quests:
+        if not active_quests:
+            ui.markdown('*Keine aktiven Quests vorhanden*').classes('text-gray-500 italic')
+        for quest in active_quests:
             with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col'):
                 with ui.row().classes('justify-between'):
                     ui.markdown(f'### {quest.name}')
-                    
                     ui.element('div').classes(f'h-6 w-6 rounded-full absolute top-0 right-0 m-2 {get_status_color(quest.current_status)}').tooltip(quest.current_status)
-                                              
                 with ui.element('div').classes('h-32 w-full border rounded-lg p-2 bg-gray-100 dark:bg-gray-800 overflow-y-auto'):
                     ui.markdown(quest.description).classes('whitespace-pre-wrap')
                 ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
@@ -104,6 +108,23 @@ def show_main_interface():
                     ui.button('Abschließen', 
                          on_click=lambda q=quest: complete_quest_action(q),
                          color='green')
+
+    # Abgeschlossene Quests
+    completed_quests = Quest.get_completed()
+    ui.markdown('## Abgeschlossene Quests').classes('mt-8 mb-4')
+    with ui.row().classes('flex flex-wrap justify-start'):
+        if not completed_quests:
+            ui.markdown('*Keine abgeschlossenen Quests vorhanden*').classes('text-gray-500 italic')
+        for quest in completed_quests:
+            with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col bg-gray-100 dark:bg-gray-800'):
+                with ui.row().classes('justify-between'):
+                    ui.markdown(f'### {quest.name}')
+                    ui.element('div').classes('h-6 w-6 rounded-full absolute top-0 right-0 m-2 bg-blue-500').tooltip('Abgeschlossen')
+                with ui.element('div').classes('h-32 w-full border rounded-lg p-2 bg-gray-50 dark:bg-gray-700 overflow-y-auto'):
+                    ui.markdown(quest.description).classes('whitespace-pre-wrap')
+                ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
+                ui.markdown(f'**Enddatum:** {quest.end_date}')
+                ui.markdown(f'**Status:** {quest.current_status}')
                 
 def show_quest_creation():
     with ui.dialog() as quest_dialog, ui.card(align_items='stretch').classes('w-96'):
