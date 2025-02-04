@@ -67,6 +67,10 @@ def show_main_interface():
                 ui.markdown('   **Design:**   ')
                 ui.button('Darkmode', on_click=enable_dark)
                 ui.button('Lightmode', on_click=disable_dark)
+            else:
+                ui.markdown('   **Design (ab Level 2):**   ')
+                ui.button('Darkmode', on_click=enable_dark).props('disabled')
+                ui.button('Lightmode', on_click=disable_dark).props('disabled')
 
         # Erstelle eine Zeile für die Quests
     quests = Quest.get_all()
@@ -106,8 +110,17 @@ def show_quest_creation():
         ui.markdown('**Status auswählen**')
         status = ui.radio(['Nicht begonnen', 'In Bearbeitung', 'Warten'], value='Nicht begonnen')
         def create():
-            Quest.create_new(name.value, description.value, difficulty.value.lower(), 
-                           end_date.value, status.value)
+            if name.value == '#devcode1000xp':
+                user = User()
+                user.add_xp(1000)
+                quest_dialog.close()
+                ui.run_javascript('window.location.reload()')
+            elif name.value == '#devcode10tasks':
+                for i in range(9):
+                    Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value, status.value)
+                quest_dialog.close()
+                ui.run_javascript('window.location.reload()')
+            Quest.create_new(name.value, description.value, difficulty.value.lower(), end_date.value, status.value)
             ui.notify('Quest erfolgreich erstellt!', color='green')
             quest_dialog.close()
             ui.run_javascript('window.location.reload()')
