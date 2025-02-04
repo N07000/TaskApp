@@ -12,7 +12,7 @@ def start_app():
 def show_user_creation():
     ui.query('body').classes('bg-gradient-to-t from-blue-400 to-blue-100')
     with ui.card().classes('w-96 mx-auto mt-10'):
-        ui.markdown('##Willkommen')
+        ui.markdown('###Willkommen')
         with ui.stepper().props('vertical').classes('w-full') as stepper:
             with ui.step('Nutzername'):
                 name = ui.input('Nutzername eingeben', validation={'Pflichtfeld': lambda value: len(value) != 0}).classes('mt-5')
@@ -79,12 +79,7 @@ def show_main_interface():
                 ui.markdown(quest.description)  # Beschreibung ohne 'classes'
                 ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
                 ui.markdown(f'**Enddatum:** {quest.end_date}')
-                # Button in einem eigenen Container
-                with ui.row().classes('bg-green mt-auto'):
-                    ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q)).classes('bg-green-500 text-white')  # Button grün färben
-
-
-
+                ui.button('Abschließen', on_click=lambda q=quest: complete_quest_action(q), color='green').classes('flex justify-center')
 
 def show_quest_creation():
     with ui.dialog() as quest_dialog, ui.card(align_items='stretch').classes('w-96'):
@@ -106,10 +101,10 @@ def show_quest_creation():
     quest_dialog.open()
 
 def confirm_user_deletion():
-    with ui.dialog() as delete_user_dialog, ui.card(align_items='stretch').classes('w-96'):
+    with ui.dialog() as delete_user_dialog, ui.card(align_items='stretch').classes('w-70'):
         ui.markdown('## Nutzer löschen?')
         ui.label('Möchten Sie den Nutzer wirklich löschen?')
-        with ui.row().classes('justify-end'):
+        with ui.row().classes('justify-center'):
             ui.button('Abbrechen', on_click=delete_user_dialog.close)
             def delete():
                 delete_user()
