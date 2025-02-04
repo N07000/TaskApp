@@ -1,3 +1,5 @@
+import os
+from PIL import Image
 import sqlite3
 
 DATABASE_NAME = "todorpg.db"
@@ -19,7 +21,8 @@ def initialize_database():
             level INTEGER DEFAULT 0,
             xp INTEGER DEFAULT 0,
             max_xp INTEGER DEFAULT 100,
-            dark_mode INTEGER DEFAULT 0
+            dark_mode INTEGER DEFAULT 0,
+            profile_image TEXT DEFAULT NULL
         )
     """)
 
@@ -76,6 +79,16 @@ def update_user_level_xp(level, xp, max_xp):
 def delete_user():
     conn = get_connection()
     cursor = conn.cursor()
+    
+    # Hole Profilbild-Pfad vor dem Löschen
+    cursor.execute("SELECT profile_image FROM user WHERE id = 1")
+    result = cursor.fetchone()
+    if result and result[0]:
+        profile_image = result[0]
+        if os.path.exists(profile_image):
+            os.remove(profile_image)
+    
+    # Lösche Nutzer und Quests
     cursor.execute("DELETE FROM user")
     cursor.execute("DELETE FROM quest")
     conn.commit()
@@ -139,6 +152,24 @@ def delete_quest(quest_id):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM quest WHERE id = ?", (quest_id,))
+    conn.commit()
+    conn.close()
+
+def update_profile_image(image_path):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE user SET profile_image = ? WHERE id = 1
+    """, (image_path,))
+    conn.commit()
+    conn.close()
+
+def remove_profile_image():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE user SET profile_image = NULL WHERE id = 1
+    """)
     conn.commit()
     conn.close()
 
