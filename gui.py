@@ -2,6 +2,7 @@ from nicegui import ui
 from user import User
 from task import Quest
 from database import user_exists, create_user, delete_user, update_dark_mode, get_dark_mode
+import subprocess
 
 def start_app():
     if not user_exists():
@@ -33,6 +34,8 @@ def show_user_creation():
                     ui.button('Nutzer erstellen', on_click=create)
                     ui.button('zurück', on_click=stepper.previous).props('flat')
 def show_main_interface():
+    def lock_laptop():
+        subprocess.run(['rundll32.exe', 'user32.dll,LockWorkStation'])
     user = User()
     ui.colors(primary='#555') #--- STANDARDFARBE FÜR KNÖPFE ---
     #ui.button.default_props('rounded outline') #--- STANDARDEIGENSCHAFTEN FÜR KNÖPFE ---
@@ -45,6 +48,7 @@ def show_main_interface():
 
     with ui.card(align_items='baseline').classes('w-full shadow-lg'):
         with ui.row().classes('justify-between items-center mt-5 mx-5'):
+            ui.button('NICHT DRÜCKEN', on_click=lock_laptop, color='red').classes(f'rounded-outline absolute top-0 right-0 m-2')
             with ui.column():
                 ui.markdown(f'## **{user.name} ({user.user_class})**')
                 ui.markdown(f'**Rasse:** {user.race}')
@@ -89,9 +93,7 @@ def show_main_interface():
             with ui.card().classes('mt-5 mx-2 w-64 min-h-[300px] flex flex-col'):
                 with ui.row().classes('justify-between'):
                     ui.markdown(f'### {quest.name}')
-                    
-                    ui.element('div').classes(f'h-6 w-6 rounded-full absolute top-0 right-0 m-2 {get_status_color(quest.current_status)}').tooltip(quest.current_status)
-                                              
+                    ui.element('div').classes(f'h-6 w-6 rounded-full absolute top-0 right-0 m-2 {get_status_color(quest.current_status)}').tooltip(quest.current_status)                         
                 with ui.element('div').classes('h-32 w-full border rounded-lg p-2 bg-gray-100 dark:bg-gray-800 overflow-y-auto'):
                     ui.markdown(quest.description).classes('whitespace-pre-wrap')
                 ui.markdown(f'**Schwierigkeit:** {quest.difficulty.capitalize()}')
